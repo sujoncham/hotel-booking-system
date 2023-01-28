@@ -1,11 +1,9 @@
 import express from 'express';
-import { authLogin, authRegister, deleteById, getAuthUser, getUserById } from '../controllers/auth.controller.js';
+import { authLogin, authRegister } from '../controllers/auth.controller.js';
 const routerAuth = express.Router();
 
 
-routerAuth.get('/', getAuthUser)
-routerAuth.get('/:id', getUserById)
-routerAuth.delete('/:id', deleteById)
+
 
 routerAuth.post('/login', authLogin)
 

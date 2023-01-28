@@ -5,12 +5,17 @@ import routerAuth from './routes/auth.route.js';
 import routerHotels from './routes/hotels.route.js';
 import routerUsers from './routes/users.route.js';
 
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import routerRoom from './routes/rooms.route.js';
+import routerUser from './routes/users.route.js';
 dotenv.config()
 const port = process.env.PORT || 5000;
+
+
 const app = express();
+
 
 // https://www.youtube.com/watch?v=k3Vfj-e1Ma4
 
@@ -29,11 +34,13 @@ const connection = async () =>{
 
 app.use(cors())
 app.use(express.json())
+app.use(cookieParser())
 
 
 
 
 app.use('/api/auth', routerAuth);
+app.use('/api/users', routerUser);
 app.use('/api/hotels', routerHotels);
 app.use('/api/rooms', routerRoom);
 app.use('/api/users', routerUsers);

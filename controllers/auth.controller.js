@@ -1,23 +1,9 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import User from "../models/User.Model.js";
 const saltRounds = 10;
 
-export const getAuthUser = async (req, res, next)=>{
-    try {
-        const getUser = await User.find();
-        res.status(200).json({
-            status: "success",
-            message: "user data get successfully",
-            data: getUser,
-        })
-    } catch (error) {
-        res.status(400).json({
-            status: "failed",
-            message: "user data not get",
-            error: error.message,
-        })
-    }
-}
+
 
 export const authLogin = async (req, res, next)=>{
     try {
@@ -25,11 +11,15 @@ export const authLogin = async (req, res, next)=>{
         if(!user) return console.log('username not found');
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
         if(!isPasswordCorrect) return console.log('Password is not correct');
-        const {password, isAdmin, ...others} = user;
-        res.status(200).json({...others});
+
+        const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.SECRET_KEY, { expiresIn: '2d' })
+        const {password, isAdmin, ...others} = user._doc;
+        res.cookie("access_token", token, {
+            httpOnly: true,
+        }).status(200).json({...others});
     } catch (error) {
         next(error)
-        res.status(200).json({
+        res.status(400).json({
             status: "failed", 
             message: "username or password is wrong",
             error: error.message,
@@ -53,31 +43,3 @@ export const authRegister = async (req, res, next)=>{
     }
 }
 
-export const getUserById = async () =>{
-    try {
-        const user = await User.findById(req.params.id);
-        res.status(200).json({
-            status: "success",
-            message: "user data get successfully",
-            data: user,
-        })
-    } catch (error) {
-        res.status(400).json({
-            status: "failed",
-            message: "user data not get",
-            error: error.message,
-        })
-    }
-}
-
-export const deleteById = async() =>{
-    try {
-        await User.findByIdAndDelete(req.params.id)
-        res.status(200).json({
-            status: "success",
-            message : "user deleted",
-        })
-    } catch (error) {
-        console.log(error)
-    }
-}

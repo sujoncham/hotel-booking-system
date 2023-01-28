@@ -1,15 +1,10 @@
 import express from 'express';
+import { deleteUserById, getAuthUser, getUserById } from '../controllers/user.controller.js';
 const routerUser = express.Router();
 
 
-routerUser.get('/', (req, res)=>{
-    res.send('users all');
-});
-routerUser.get('/login', (req, res)=>{
-    res.send('Hello, this is user Login endpoint');
-})
-routerUser.get('/register', (req, res)=>{
-    res.send('Hello, this is user register endpoint');
-})
+routerUser.get('/', getAuthUser)
+routerUser.get('/:id', getUserById)
+routerUser.delete('/:id', deleteUserById)
 
 export default routerUser;
